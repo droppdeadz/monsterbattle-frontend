@@ -1,0 +1,112 @@
+﻿<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Exo+2">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Righteous">
+
+<style>
+    h1 {
+        font-family: "Righteous", sans-serif;
+        font-size: 50px;
+    }
+
+    .bodyfont {
+        font-family: "Exo 2", sans-serif;
+        font-size: 15px;
+        width: auto;
+    }
+
+    .font {
+        font-family: "Exo 2", sans-serif;
+        font-size: 15px;
+        width: 200px;
+    }
+
+    bg {
+        height: 1000vh;
+    }
+
+</style>
+
+<div class="col-md-6 col-md-offset-3 bg">
+    <h1>Hi {{currentUser.firstName}}!</h1>
+    <div>
+        <h3>Create Monster:</h3>
+        <button [routerLink]="['/addmonster']">CREATE</button>
+        <h1>Monster List</h1>
+        <div class="bodyfont" *ngFor="let monsters of monster">
+            <p>Monster ID : {{monsters.monstersID}}</p>
+            <p>Monster Name : {{monsters.monstersName}}</p>
+            <p>Monster Type : {{monsters.monstersType}}</p>
+            <p>Monster Attack : {{monsters.attack}}</p>
+            <p>Monster Defend : {{monsters.defend}}</p>
+            <p>Monster HP : {{monsters.hp}}</p>
+            <p>Monster Speed : {{monsters.speed}}</p>
+            <p><a (click)="openEdit(monsters.monstersName)">Edit</a></p>
+            <p><a (click)="deleteMonster(monsters.monstersName)">Delete</a></p>
+
+            <div class="col-md-6 col-md-offset-3 bodyfont" *ngIf="whichmon === monsters.monstersName">
+
+                <form name="form" (ngSubmit)="f.form.valid && edit(monsters.monstersName)" #f="ngForm" novalidate>
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !monstersID.valid }">
+                        <label for="monstersID">Monster ID</label>
+                        <input type="text" class="form-control" name="monstersID" [(ngModel)]="model.monstersID"
+                               monstersID="ngModel" required/>
+                        <div *ngIf="f.submitted && !monstersID.valid" class="help-block">Monsters ID is required</div>
+                    </div>
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !monstersName.valid }">
+                        <label for="monstersName">Monster Name</label>
+                        <input type="text" class="form-control" name="monstersName" [(ngModel)]="model.monstersName"
+                               monstersName="ngModel" required/>
+                        <div *ngIf="f.submitted && !monstersName.valid" class="help-block">Monster Name is required
+                        </div>
+                    </div>
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !monstersType.valid }">
+                        <label for="monstersType">Monster Type</label>
+                        <input type="text" class="form-control" name="monsterType" [(ngModel)]="model.monstersType"
+                               monstersType="ngModel" required/>
+                        <div *ngIf="f.submitted && !monstersType.valid" class="help-block">Monster Type is required
+                        </div>
+                    </div>
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !attack.valid }">
+                        <label for="attack">Attack</label>
+                        <input type="text" class="form-control" name="attack" [(ngModel)]="model.attack"
+                               attack="ngModel" required/>
+                        <div *ngIf="f.submitted && !attack.valid" class="help-block">Attack is required</div>
+                    </div>
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !defend.valid }">
+                        <label for="defend">Defend</label>
+                        <input type="text" class="form-control" name="defend" [(ngModel)]="model.defend"
+                               defend="ngModel" required/>
+                        <div *ngIf="f.submitted && !defend.valid" class="help-block">Defend is required</div>
+                    </div>
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !hp.valid }">
+                        <label for="hp">HP</label>
+                        <input type="text" class="form-control" name="hp" [(ngModel)]="model.hp" hp="ngModel" required/>
+                        <div *ngIf="f.submitted && !hp.valid" class="help-block">HP is required</div>
+                    </div>
+                    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !speed.valid }">
+                        <label for="speed">Speed</label>
+                        <input type="text" class="form-control" name="speed" [(ngModel)]="model.speed" speed="ngModel"
+                               required/>
+                        <div *ngIf="f.submitted && !speed.valid" class="help-block">Speed is required</div>
+                    </div>
+                    <div class="form-group">
+                        <button [disabled]="loading" class="btn btn-primary">Save</button>
+                        <img *ngIf="loading"
+                             src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="/>
+                        <a (click)="whichmon=''" class="btn btn-link">Cancel</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <div class="font">
+        <h3>All registered users:</h3>
+        <ul>
+            <li *ngFor="let user of users">
+                {{user.username}} ({{user.firstName}} {{user.lastName}})
+                - <a (click)="deleteUser(user.id)">Delete</a>
+            </li>
+        </ul>
+        <p><a [routerLink]="['/login']">Logout</a></p>
+    </div>
+</div>
